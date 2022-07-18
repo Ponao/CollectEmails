@@ -18,10 +18,16 @@ module.exports = {
             let existSameBrowser = await Email.findOne({email: cleanEmail, browserId})
 
             if(!!existSameBrowser) {
-                const err = {}
-                err.param = `all`
-                err.msg = `You already save this email from this browser`
-                return res.status(401).json({ success: false, errors: [err] })
+                if(![...existSameBrowser.browsers].find(x => x === browserId)) {
+                    existSameBrowser.browsers = [...existSameBrowser.browsers, browserId]
+
+                    await existSameBrowser.save()
+                } else {
+                    const err = {}
+                    err.param = `all`
+                    err.msg = `You already save this email from this browser`
+                    return res.status(401).json({ success: false, errors: [err] })
+                }
             }
 
             let existEmail = await Email.findOne({email: cleanEmail})
@@ -36,7 +42,7 @@ module.exports = {
                 let email = new Email()
 
                 email.email = cleanEmail
-                email.browserId = browserId
+                email.browsers = [browserId]
                 email.devices = [device]
 
                 await email.save()

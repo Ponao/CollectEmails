@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const EmailSchema = new Schema({
     email: { type: String, },
-    browserId: { type: Number, },
+    browsers: [{ type: Number, }],
     devices: [{ type: String }],
     createdAt: { type: Date, default: Date.now, },
     buff: Buffer
