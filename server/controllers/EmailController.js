@@ -15,13 +15,13 @@ module.exports = {
             let cleanEmail = email.toLowerCase().replace(/\s+/g, '')
             let device = req.device.type.toUpperCase()
 
-            let existSameBrowser = await Email.findOne({email: cleanEmail, browserId})
+            let existEmail = await Email.findOne({email: cleanEmail})
 
-            if(!!existSameBrowser) {
-                if(![...existSameBrowser.browsers].find(x => x === browserId)) {
-                    existSameBrowser.browsers = [...existSameBrowser.browsers, browserId]
+            if(!!existEmail) {
+                if(![...existEmail.browsers].find(x => x === browserId)) {
+                    existEmail.browsers = [...existEmail.browsers, browserId]
 
-                    await existSameBrowser.save()
+                    await existEmail.save()
                 } else {
                     const err = {}
                     err.param = `all`
@@ -29,8 +29,6 @@ module.exports = {
                     return res.status(401).json({ success: false, errors: [err] })
                 }
             }
-
-            let existEmail = await Email.findOne({email: cleanEmail})
 
             if(!!existEmail) {
                 if(![...existEmail.devices].find(x => x === device)) {
